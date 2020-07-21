@@ -1,0 +1,13 @@
+{
+  "name": "TextEditor",
+  "tree": {
+    "$className": "Folder",
+    "Plugin": {
+      "$path": "src"
+    },
+    "Packages": {
+      "$className": "Folder",
+      "$path": "vendor"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "TextEditor",
+  "tree": {
+    "$className": "DataModel",
+    "ServerStorage": {
+      "$className": "ServerStorage",
+      "TextEditor": {
+        "$className": "Folder",
+        "Plugin": {
+          "$path": "src"
+        },
+
+        "Packages": {
+          "$className": "Folder",
+          "$path": "vendor"
+        }
+      }
+    }
+  }
+}
