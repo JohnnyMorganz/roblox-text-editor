@@ -5,7 +5,7 @@ local Roact = require(TextEditor.Packages.Roact)
 
 local StudioThemeContext = require(script.Parent.StudioThemeContext)
 
-local function TextLabel(props)
+local function TextBox(props)
   local update
   local autoSize = not props.Size
 
@@ -26,12 +26,14 @@ local function TextLabel(props)
 
   return Roact.createElement(StudioThemeContext.Consumer, {
     render = function(theme)
-      return Roact.createElement("TextLabel", {
+      return Roact.createElement("TextBox", {
         AnchorPoint = props.AnchorPoint,
         LayoutOrder = props.LayoutOrder,
         Position = props.Position,
         Size = props.Size or props.TextWrapped and UDim2.new(1, 0, 0, 0) or nil,
         BackgroundTransparency = props.BackgroundTransparency or 1,
+        BackgroundColor3 = theme:GetColor(props.themeType or "InputFieldBackground", props.themeModifier or "Default"),
+        BorderColor3 = theme:GetColor(props.borderThemeType or "InputFieldBackground", props.borderThemeModifier or "Default"),
 
         Font = props.Font or Enum.Font.SourceSans,
         TextSize = props.TextSize or 20,
@@ -40,6 +42,8 @@ local function TextLabel(props)
         TextWrapped = props.TextWrapped,
         TextXAlignment = props.TextXAlignment or Enum.TextXAlignment.Left,
         TextYAlignment = props.TextYAlignment or Enum.TextYAlignment.Center,
+        ClearTextOnFocus = props.ClearTextOnFocus or true,
+        MultiLine = props.MultiLine,
         RichText = props.RichText or false,
 
         [Roact.Ref] = autoSize and update or nil,
@@ -53,4 +57,4 @@ local function TextLabel(props)
 end
 
 
-return TextLabel
+return TextBox

@@ -11,7 +11,13 @@ local App = require(TextEditor.Plugin.Components.App)
 local textEditorWidgetInfo = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 200, 300, 150, 150)
 local toolbar = plugin:CreateToolbar("Text Editor")
 local textEditorButton = toolbar:CreateButton("Open Text Editor", "Open the text editor", "rbxassetid://4459262762")
-local textEditorAction = plugin:CreatePluginAction("TextEditorToggle", "Text Editor: Toggle", "Toggles the text editor to open/close", "rbxassetid://4459262762", true)
+local textEditorActions = {
+  toggleOpen = plugin:CreatePluginAction("TextEditorToggleOpen", "Text Editor: Toggle Open", "Toggles the text editor to open/close", "rbxassetid://4459262762", true),
+  -- toggleBold = plugin:CreatePluginAction("TextEditorToggleBold", "Text Editor: Toggle Bold", "Toggles bold in the text editor", "rbxassetid://4459262762", true),
+  -- toggleItalic = plugin:CreatePluginAction("TextEditorToggleItalic", "Text Editor: Toggle Italic", "Toggles italic in the text editor", "rbxassetid://4459262762", true),
+  -- toggleUnderline = plugin:CreatePluginAction("TextEditorToggleUnderline", "Text Editor: Toggle Underline", "Toggles underline in the text editor", "rbxassetid://4459262762", true),
+  -- toggleStrikethrough = plugin:CreatePluginAction("TextEditorToggleStrikethrough", "Text Editor: Toggle Strikethrough", "Toggles strikethrough in the text editor", "rbxassetid://4459262762", true),
+}
 local textEditorWidget = plugin:CreateDockWidgetPluginGui("TextEditorWidget", textEditorWidgetInfo)
 textEditorWidget.Name = "TextEditor"
 textEditorWidget.Title = "Text Editor"
@@ -62,7 +68,7 @@ textEditorWidget:BindToClose(function()
 end)
 
 pluginMaid:GiveTask(textEditorButton.Click:Connect(onButtonClick))
-pluginMaid:GiveTask(textEditorAction.Triggered:Connect(onButtonClick))
+pluginMaid:GiveTask(textEditorActions.toggleOpen.Triggered:Connect(onButtonClick))
 pluginMaid:GiveTask(Selection.SelectionChanged:Connect(selectionChanged))
 
 plugin.Unloading:Connect(function()
