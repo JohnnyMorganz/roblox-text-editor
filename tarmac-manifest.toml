@@ -1,0 +1,19 @@
+[inputs."assets/bold.png"]
+hash = "18942dc977f8f3d03dca817430cdebe7e208ae262e3410e0bbcc94fb0a58c75d"
+id = 5402145483
+packable = false
+
+[inputs."assets/italic.png"]
+hash = "00e7de15619aada1356ea086b625d9e0e79bd983170367aee5b17cbb0621088a"
+id = 5402145537
+packable = false
+
+[inputs."assets/strikethrough.png"]
+hash = "391595127fe7de7f1aae65e3e21d6e57593e532b1bc248d77dbe6bf98a749f69"
+id = 5402145582
+packable = false
+
+[inputs."assets/underline.png"]
+hash = "31f05f167506107d73b9c77d58218438523e9add9d2fda3ee3f12d31f216d2bf"
+id = 5402145628
+packable = false

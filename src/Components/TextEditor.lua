@@ -3,30 +3,108 @@ local ChangeHistoryService = game:GetService("ChangeHistoryService")
 local Roact = require(TextEditor.Packages.Roact)
 local RoactRodux = require(TextEditor.Packages.RoactRodux)
 local Llama = require(TextEditor.Packages.Llama)
+local Maid = require(TextEditor.Packages.Maid)
 
 local TextEditorComponent = Roact.Component:extend("TextEditor")
+local Toolbar = require(script.Parent.Toolbar)
 local Section = require(script.Parent.Section)
 local ThemedTextLabel = require(script.Parent.TextLabel)
 local ThemedTextBox = require(script.Parent.TextBox)
 local ThemedTextButton = require(script.Parent.TextButton)
 
+-- local KEYCODES_FOR_TAGS = {
+--   [Enum.KeyCode.B] = "b",
+--   [Enum.KeyCode.I] = "i",
+--   [Enum.KeyCode.U] = "u",
+-- }
+
+local function stringtrim(str)
+  return string.match(str, '^%s*(.-)%s*$')
+end
+
+local function stringstartswith(str, pattern, plain)
+	local start = 1
+	return string.find(str, pattern, start, plain) == start
+end
+
+local function stringendswith(str, pattern, plain)
+	local start = #str - #pattern + 1
+	return string.find(str, pattern, start, plain) == start
+end
+
 local function addTagsAroundSelection(guiItem, cursorPosition, selectionStart, tag)
   if cursorPosition == -1 or selectionStart == -1 then return guiItem.Text end
 
+  local startTag, endTag = string.format('<%s>', tag), string.format('</%s>', tag)
+
+  local selectedText = string.sub(guiItem.Text, math.min(cursorPosition, selectionStart), math.max(cursorPosition, selectionStart) - 1)
+  local trimmedSelectedText = stringtrim(selectedText)
+
+  if stringstartswith(trimmedSelectedText, startTag) and stringendswith(trimmedSelectedText, endTag) then
+    selectedText = selectedText:gsub(startTag, ""):gsub(endTag, "")
+  else
+    selectedText = startTag .. selectedText .. endTag
+  end
+
   local text = string.sub(guiItem.Text, 0, math.min(cursorPosition, selectionStart) - 1)
-  text ..= string.format('<%s>', tag)
-  text ..= string.sub(guiItem.Text, math.min(cursorPosition, selectionStart), math.max(cursorPosition, selectionStart) - 1)
-  text ..= string.format('</%s>', tag)
+  local startPosition = text:len() + 1
+  text ..= selectedText
+  local endPosition = text:len() + 1
   text ..= string.sub(guiItem.Text, math.max(cursorPosition, selectionStart))
 
-  return text
+  return text, startPosition, endPosition
 end
 
 function TextEditorComponent:init()
+  self.maid = Maid.new()
+
   self.inputRef = Roact.createRef()
   self.labelText, self.updateLabelText = Roact.createBinding("")
   self.selectionStartPosition, self.updateSelectionStartPosition = Roact.createBinding(-1) -- THIS IS DELAYED
   self.cursorPosition, self.updateCursorPosition = Roact.createBinding(-1) -- THIS IS DELAYED
+end
+
+-- function TextEditorComponent:toggleTagWrapper(tag)
+--   return function()
+--     local textBox = self.inputRef:getValue()
+--     local cursorPosition, selectionStart = self.cursorPosition:getValue(), self.selectionStartPosition:getValue()
+--     if cursorPosition ~= -1 and selectionStart ~= -1 then
+--       textBox.Text = addTagsAroundSelection(textBox, cursorPosition, selectionStart, tag)
+--       textBox:CaptureFocus()
+--     else
+--       -- Add tags at cursor position and then set the cursor in between them
+--       local startText, endText = textBox.Text:sub(0, cursorPosition - 1), textBox.Text:sub(cursorPosition)
+--       startText ..= "<" .. tag .. ">"
+--       local newCursorPosition = startText:len() + 1
+--       startText ..= "</" .. tag .. ">"
+--       textBox.Text = startText .. endText
+--       textBox:CaptureFocus()
+--       textBox.CursorPosition = newCursorPosition 
+--     end
+--   end
+-- end
+
+function TextEditorComponent:didMount()
+  local overlay = self.props.overlayRef:getValue()
+  local textBox = self.inputRef:getValue()
+  -- TODO: Keybinds
+  -- self.maid:GiveTask(overlay.InputBegan:Connect(function(InputObject)
+  --   if InputObject:IsModifierKeyDown(Enum.ModifierKey.Ctrl) then
+  --     if KEYCODES_FOR_TAGS[InputObject.KeyCode] then
+  --       textBox.Text = addTagsAroundSelection(textBox, textBox.CursorPosition, textBox.SelectionStart, KEYCODES_FOR_TAGS[InputObject.KeyCode])
+  --     end
+  --   end
+  -- end))
+
+  -- See main.server.lua for reason this is not used
+  -- self.maid:GiveTask(self.props.pluginActions.toggleBold.Triggered:Connect(self:toggleTagWrapper("b")))
+  -- self.maid:GiveTask(self.props.pluginActions.toggleItalic.Triggered:Connect(self:toggleTagWrapper("i")))
+  -- self.maid:GiveTask(self.props.pluginActions.toggleUnderline.Triggered:Connect(self:toggleTagWrapper("u")))
+  -- self.maid:GiveTask(self.props.pluginActions.toggleStrikethrough.Triggered:Connect(self:toggleTagWrapper("s")))
+end
+
+function TextEditorComponent:willUnmount()
+  self.maid:DoCleaning()
 end
 
 function TextEditorComponent:render()
@@ -48,18 +126,11 @@ function TextEditorComponent:render()
       end,
     }),
   
-    Toolbar = Roact.createElement("Frame", {
-      LayoutOrder = 1,
-      Size = UDim2.new(1, 0, 0, 20),
-    }, {
-      Button = Roact.createElement("TextButton", {
-        Text = "B",
-        Size = UDim2.fromOffset(10, 10),
-  
-        [Roact.Event.Activated] = function()
-          self.inputRef:getValue().Text = addTagsAroundSelection(self.inputRef:getValue(), self.cursorPosition:getValue(), self.selectionStartPosition:getValue(), "b")
-        end
-      })
+    Toolbar = Roact.createElement(Toolbar, {
+      inputRef = self.inputRef,
+      cursorPosition = self.cursorPosition,
+      selectionStartPosition = self.selectionStartPosition,
+      addTagsAroundSelection = addTagsAroundSelection,
     }),
   
     TextBox = Roact.createElement(ThemedTextBox, {
@@ -73,6 +144,15 @@ function TextEditorComponent:render()
   
       OnTextChange = function(rbx)
         self.updateLabelText(rbx.Text)
+        
+        -- -- Create history waypoints to undo text change
+        -- local settingText = rbx.Text
+        -- local focusedTextItem = self.props.TextItem
+        -- delay(1, function()
+        --   if focusedTextItem == self.props.TextItem and settingText == rbx.Text then
+        --     ChangeHistoryService:SetWaypoint("Typed Text")
+        --   end
+        -- end)
       end,
   
       OnSelectionStartChange = function(rbx)
@@ -114,18 +194,18 @@ function TextEditorComponent:render()
       })
     }),
   
-    Save = Roact.createElement(ThemedTextButton, {
-      LayoutOrder = 4,
-      Name = "Save",
-      Size = UDim2.new(1, 0, 0, 35),
-      AnchorPoint = Vector2.new(0, 1),
-      Enabled = true,
-      ShowPressed = true,
-      OnClicked = function()
-        self.props.TextItem.Text = self.labelText:getValue()
-        ChangeHistoryService:SetWaypoint("Updated text")
-      end,
-    }),
+    -- Save = Roact.createElement(ThemedTextButton, {
+    --   LayoutOrder = 4,
+    --   Name = "Save",
+    --   Size = UDim2.new(1, 0, 0, 35),
+    --   AnchorPoint = Vector2.new(0, 1),
+    --   Enabled = true,
+    --   ShowPressed = true,
+    --   OnClicked = function()
+    --     self.props.TextItem.Text = self.labelText:getValue()
+    --     ChangeHistoryService:SetWaypoint("Updated text")
+    --   end,
+    -- }),
   })
 end
 

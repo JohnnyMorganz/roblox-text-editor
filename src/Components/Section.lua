@@ -6,6 +6,7 @@ local ThemedTextLabel = require(script.Parent.TextLabel)
 local Section = Roact.Component:extend("Section")
 
 function Section:init()
+  self.lastClickTime = 0
   self.mainSizeY, self.updateMainSizeY = Roact.createBinding(0)
   self.contentsSizeY, self.updateContentsSizeY = Roact.createBinding(0)
   self.minimized, self.updateMinimized = Roact.createBinding(false)
@@ -38,10 +39,19 @@ function Section:render()
 
         TitleBar = Roact.createElement("ImageButton", {
           LayoutOrder = 1,
-          AutoButtonColor = false,
+          -- AutoButtonColor = false,
           BorderSizePixel = 0,
           Size = UDim2.new(1, 0, 0, 27),
-          BackgroundColor3 = theme:GetColor("Titlebar")
+          BackgroundColor3 = theme:GetColor("Titlebar"),
+          [Roact.Event.MouseButton1Down] = function()
+            local now = tick()
+            if now - self.lastClickTime < 0.5 then
+              self.updateMinimized(not self.minimized:getValue())
+              self.lastClickTime = 0
+            else
+              self.lastClickTime = now
+            end
+          end,
         }, {
           Label = Roact.createElement(ThemedTextLabel, {
             Text = self.props.Title,

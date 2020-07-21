@@ -13,6 +13,11 @@ local toolbar = plugin:CreateToolbar("Text Editor")
 local textEditorButton = toolbar:CreateButton("Open Text Editor", "Open the text editor", "rbxassetid://4459262762")
 local textEditorActions = {
   toggleOpen = plugin:CreatePluginAction("TextEditorToggleOpen", "Text Editor: Toggle Open", "Toggles the text editor to open/close", "rbxassetid://4459262762", true),
+
+  -- Not using PluginActions in this case because
+  -- 1) PluginActions aren't fired within a textbox
+  -- 2) Cannot pre-bind plugin actions to specific keybinds, so users have to go within their settings to set them
+
   -- toggleBold = plugin:CreatePluginAction("TextEditorToggleBold", "Text Editor: Toggle Bold", "Toggles bold in the text editor", "rbxassetid://4459262762", true),
   -- toggleItalic = plugin:CreatePluginAction("TextEditorToggleItalic", "Text Editor: Toggle Italic", "Toggles italic in the text editor", "rbxassetid://4459262762", true),
   -- toggleUnderline = plugin:CreatePluginAction("TextEditorToggleUnderline", "Text Editor: Toggle Underline", "Toggles underline in the text editor", "rbxassetid://4459262762", true),
@@ -30,7 +35,9 @@ local store = Rodux.Store.new(Reducer, {})
 local app = Roact.createElement(RoactRodux.StoreProvider, {
   store = store,
 }, {
-  App = Roact.createElement(App)
+  App = Roact.createElement(App, {
+    pluginActions = textEditorActions
+  })
 })
 
 local roactTree = Roact.mount(app, textEditorWidget, "TextEditor")
