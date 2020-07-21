@@ -42,15 +42,18 @@ local function TextBox(props)
         TextWrapped = props.TextWrapped,
         TextXAlignment = props.TextXAlignment or Enum.TextXAlignment.Left,
         TextYAlignment = props.TextYAlignment or Enum.TextYAlignment.Center,
-        ClearTextOnFocus = props.ClearTextOnFocus or true,
+        ClearTextOnFocus = props.ClearTextOnFocus == nil and true or props.ClearTextOnFocus,
         MultiLine = props.MultiLine,
         RichText = props.RichText or false,
 
-        [Roact.Ref] = autoSize and update or nil,
+        [Roact.Ref] = props.ref or nil, --autoSize and update or nil,
         [Roact.Change.TextBounds] = autoSize and update or nil,
         [Roact.Change.AbsoluteSize] = autoSize and update or nil,
         [Roact.Change.Parent] = autoSize and update or nil,
         [Roact.Change.Text] = props.OnTextChange or nil,
+
+        [Roact.Change.SelectionStart] = props.OnSelectionStartChange or nil,
+        [Roact.Change.CursorPosition] = props.OnCursorPositionChange or nil,
       })
     end
   })
