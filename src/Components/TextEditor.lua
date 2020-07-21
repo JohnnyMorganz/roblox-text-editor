@@ -84,28 +84,28 @@ end
 --   end
 -- end
 
-function TextEditorComponent:didMount()
-  local overlay = self.props.overlayRef:getValue()
-  local textBox = self.inputRef:getValue()
-  -- TODO: Keybinds
-  -- self.maid:GiveTask(overlay.InputBegan:Connect(function(InputObject)
-  --   if InputObject:IsModifierKeyDown(Enum.ModifierKey.Ctrl) then
-  --     if KEYCODES_FOR_TAGS[InputObject.KeyCode] then
-  --       textBox.Text = addTagsAroundSelection(textBox, textBox.CursorPosition, textBox.SelectionStart, KEYCODES_FOR_TAGS[InputObject.KeyCode])
-  --     end
-  --   end
-  -- end))
+-- function TextEditorComponent:didMount()
+--   local overlay = self.props.overlayRef:getValue()
+--   local textBox = self.inputRef:getValue()
+--   TODO: Keybinds
+--   self.maid:GiveTask(overlay.InputBegan:Connect(function(InputObject)
+--     if InputObject:IsModifierKeyDown(Enum.ModifierKey.Ctrl) then
+--       if KEYCODES_FOR_TAGS[InputObject.KeyCode] then
+--         textBox.Text = addTagsAroundSelection(textBox, textBox.CursorPosition, textBox.SelectionStart, KEYCODES_FOR_TAGS[InputObject.KeyCode])
+--       end
+--     end
+--   end))
 
-  -- See main.server.lua for reason this is not used
-  -- self.maid:GiveTask(self.props.pluginActions.toggleBold.Triggered:Connect(self:toggleTagWrapper("b")))
-  -- self.maid:GiveTask(self.props.pluginActions.toggleItalic.Triggered:Connect(self:toggleTagWrapper("i")))
-  -- self.maid:GiveTask(self.props.pluginActions.toggleUnderline.Triggered:Connect(self:toggleTagWrapper("u")))
-  -- self.maid:GiveTask(self.props.pluginActions.toggleStrikethrough.Triggered:Connect(self:toggleTagWrapper("s")))
-end
+--   See main.server.lua for reason this is not used
+--   self.maid:GiveTask(self.props.pluginActions.toggleBold.Triggered:Connect(self:toggleTagWrapper("b")))
+--   self.maid:GiveTask(self.props.pluginActions.toggleItalic.Triggered:Connect(self:toggleTagWrapper("i")))
+--   self.maid:GiveTask(self.props.pluginActions.toggleUnderline.Triggered:Connect(self:toggleTagWrapper("u")))
+--   self.maid:GiveTask(self.props.pluginActions.toggleStrikethrough.Triggered:Connect(self:toggleTagWrapper("s")))
+-- end
 
-function TextEditorComponent:willUnmount()
-  self.maid:DoCleaning()
-end
+-- function TextEditorComponent:willUnmount()
+--   self.maid:DoCleaning()
+-- end
 
 function TextEditorComponent:render()
   self.updateLabelText(self.props.TextItem.Text)
@@ -122,7 +122,7 @@ function TextEditorComponent:render()
       Padding = UDim.new(0, 5),
       SortOrder = Enum.SortOrder.LayoutOrder,
       [Roact.Change.AbsoluteContentSize] = function(rbx)
-        self.props.updateHolderSize(rbx.AbsoluteContentSize.Y)
+        self.props.updateHolderSize(rbx.AbsoluteContentSize.Y + 10) -- Addition due to padding
       end,
     }),
   
@@ -193,19 +193,6 @@ function TextEditorComponent:render()
         TextXAlignment = self.props.TextItem.TextXAlignment,
       })
     }),
-  
-    -- Save = Roact.createElement(ThemedTextButton, {
-    --   LayoutOrder = 4,
-    --   Name = "Save",
-    --   Size = UDim2.new(1, 0, 0, 35),
-    --   AnchorPoint = Vector2.new(0, 1),
-    --   Enabled = true,
-    --   ShowPressed = true,
-    --   OnClicked = function()
-    --     self.props.TextItem.Text = self.labelText:getValue()
-    --     ChangeHistoryService:SetWaypoint("Updated text")
-    --   end,
-    -- }),
   })
 end
 
