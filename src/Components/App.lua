@@ -6,6 +6,7 @@ local Llama = require(TextEditor.Packages.Llama)
 
 local App = Roact.Component:extend("App")
 local StudioThemeContext = require(script.Parent.StudioThemeContext)
+local Section = require(script.Parent.Section)
 local ThemedTextLabel = require(script.Parent.TextLabel)
 local ThemedTextBox = require(script.Parent.TextBox)
 local ThemedTextButton = require(script.Parent.TextButton)
@@ -13,6 +14,7 @@ local ThemedTextButton = require(script.Parent.TextButton)
 function App:init()
   local studioSettings = settings().Studio
 
+  self.holderSize, self.updateHolderSize = Roact.createBinding(0)
   self.labelText, self.updateLabelText = Roact.createBinding("")
   self:setState({ 
     theme = studioSettings.Theme
@@ -48,10 +50,13 @@ function App:render()
     Children.Layout = Roact.createElement("UIListLayout", {
       Padding = UDim.new(0, 5),
       SortOrder = Enum.SortOrder.LayoutOrder,
+      [Roact.Change.AbsoluteContentSize] = function(rbx)
+        self.updateHolderSize(rbx.AbsoluteContentSize.Y)
+      end,
     })
 
     Children.TextBox = Roact.createElement(ThemedTextBox, {
-      LayoutOrder = 1,
+      LayoutOrder = 2,
       Text = self.props.TextItem.Text,
       ClearTextOnFocus = false,
       MultiLine = true,
@@ -63,23 +68,34 @@ function App:render()
       end
     })
 
-    Children.Output = Roact.createElement(ThemedTextLabel, {
-      LayoutOrder = 2,
-      BackgroundTransparency = 1,
-      Text = self.labelText,
-      RichText = true,
-      
-      -- Copy the label text
-      Font = self.props.TextItem.Font,
-      TextColor3 = self.props.TextItem.TextColor3,
-      TextSize = self.props.TextItem.TextSize,
-      TextStrokeColor3 = self.props.TextItem.TextStrokeColor3,
-      TextStrokeTransparency = self.props.TextItem.TextStrokeTransparency,
-      TextTransparency = self.props.TextItem.TextTransparency,
+    Children.Output = Roact.createElement(Section, {
+      LayoutOrder = 3,
+      Title = "Output",
+    }, {
+      Padding = Roact.createElement("UIPadding", {
+        PaddingTop = UDim.new(0, 5),
+        PaddingBottom = UDim.new(0, 5),
+      }),
+
+      OutputLabel = Roact.createElement(ThemedTextLabel, {
+        BackgroundTransparency = 1,
+        Text = self.labelText,
+        RichText = true,
+        Width = UDim.new(1, 0),
+        
+        -- Copy the label text
+        Font = self.props.TextItem.Font,
+        TextColor3 = self.props.TextItem.TextColor3,
+        TextSize = self.props.TextItem.TextSize,
+        TextStrokeColor3 = self.props.TextItem.TextStrokeColor3,
+        TextStrokeTransparency = self.props.TextItem.TextStrokeTransparency,
+        TextTransparency = self.props.TextItem.TextTransparency,
+        TextXAlignment = self.props.TextItem.TextXAlignment,
+      })
     })
 
     Children.Save = Roact.createElement(ThemedTextButton, {
-      LayoutOrder = 3,
+      LayoutOrder = 4,
       Name = "Save",
       Size = UDim2.new(1, 0, 0, 35),
       AnchorPoint = Vector2.new(0, 1),
@@ -106,7 +122,9 @@ function App:render()
         return Roact.createElement("ScrollingFrame", {
           BackgroundColor3 = theme:GetColor("MainBackground", "Default"),
           Size = UDim2.fromScale(1, 1),
-          CanvasSize = UDim2.fromScale(1, 1),
+          CanvasSize = self.holderSize:map(function(value)
+            return UDim2.fromOffset(0, value)
+          end),
         }, Children)
       end
     })
