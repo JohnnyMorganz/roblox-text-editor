@@ -35,7 +35,7 @@ local function TextLabel(props)
 
         Font = props.Font or Enum.Font.SourceSans,
         TextSize = props.TextSize or 20,
-        TextColor3 = theme:GetColor(props.themeType or "MainText", props.themeModifier or "Default"),
+        TextColor3 = props.TextColor3 or theme:GetColor(props.themeType or Enum.StudioStyleGuideColor.MainText, props.themeModifier or Enum.StudioStyleGuideModifier.Default),
         Text = props.Text or "[NO TEXT PRESENT]",
         TextWrapped = props.TextWrapped,
         TextXAlignment = props.TextXAlignment or Enum.TextXAlignment.Left,

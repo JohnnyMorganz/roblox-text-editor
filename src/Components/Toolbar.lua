@@ -3,27 +3,8 @@ local Roact = require(TextEditor.Packages.Roact)
 
 local Toolbar = Roact.Component:extend("Toolbar")
 local StudioThemeContext = require(script.Parent.StudioThemeContext)
--- local assets = require(TextEditor.assets)
-
-local function ToolbarButton(props)
-  return Roact.createElement(StudioThemeContext.Consumer, {
-    render = function(theme)
-      return Roact.createElement("TextButton", {
-        LayoutOrder = props.LayoutOrder,
-        Size = UDim2.fromScale(1, 1), -- Will use this when I use icons instead of text
-        BackgroundColor3 = theme:GetColor("RibbonButton"),
-        BorderSizePixel = 0,
-        --Image = props.Image,
-        Text = props.Text,
-        TextColor3 = theme:GetColor("TitlebarText"),
-
-        [Roact.Event.Activated] = props.OnClick,
-      }, {
-        AspectRatio = Roact.createElement("UIAspectRatioConstraint"),
-      })
-    end
-  })
-end
+local ToolbarButton = require(script.Parent.ToolbarButton)
+local assets = require(TextEditor.Plugin.assets)
 
 function Toolbar:toggleTagWrapper(tag)
   return function()
@@ -64,31 +45,34 @@ function Toolbar:render()
   
         BoldButton = Roact.createElement(ToolbarButton, {
           LayoutOrder = 1,
-          -- Image = assets.bold,
-          Text = "B",
+          Text = "<b>B</b>",
           OnClick = self:toggleTagWrapper("b")
         }),
 
         ItalicButton = Roact.createElement(ToolbarButton, {
           LayoutOrder = 2,
-          -- Image = assets.italic,
-          Text = "I",
+          Text = "<i>I</i>",
           OnClick = self:toggleTagWrapper("i")
         }),
   
         UnderlineButton = Roact.createElement(ToolbarButton, {
           LayoutOrder = 3,
-          -- Image = assets.underline,
-          Text = "U",
+          Text = "<u>U</u>",
           OnClick = self:toggleTagWrapper("u")
         }),
   
         StrikethroughButton = Roact.createElement(ToolbarButton, {
           LayoutOrder = 4,
-          -- Image = assets.strikethrough,
-          Text = "S",
+          Text = "<s>S</s>",
           OnClick = self:toggleTagWrapper("s")
         }),
+
+        -- XAlignmentLeft = Roact.createElement(ToolbarButton, {
+        --   type = "ImageButton",
+        --   LayoutOrder = 5,
+        --   Image = assets["paragraph-left"],
+        --   OnClick = self:toggleTagWrapper("s")
+        -- }),
       })
     end
   })

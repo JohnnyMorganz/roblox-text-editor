@@ -63,7 +63,7 @@ function App:render()
 
           Holder = Roact.createElement("ScrollingFrame", {
             LayoutOrder = 1,
-            BackgroundColor3 = theme:GetColor("MainBackground", "Default"),
+            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground, Enum.StudioStyleGuideModifier.Default),
             Size = self.props.TextItem and UDim2.new(1, 0, 1, -35) or UDim2.fromScale(1, 1),
             CanvasSize = self.holderSize:map(function(value)
               return UDim2.fromOffset(0, value)
@@ -73,7 +73,7 @@ function App:render()
           SaveButtonHolder = Roact.createElement("Frame", {
             LayoutOrder = 2,
             Size = UDim2.new(1, 0, 0, 35),
-            BackgroundColor3 = theme:GetColor("MainBackground", "Default"),
+            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground, Enum.StudioStyleGuideModifier.Default),
             BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
             Visible = self.props.TextItem
           }, {

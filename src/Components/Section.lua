@@ -42,7 +42,7 @@ function Section:render()
           -- AutoButtonColor = false,
           BorderSizePixel = 0,
           Size = UDim2.new(1, 0, 0, 27),
-          BackgroundColor3 = theme:GetColor("Titlebar"),
+          BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Titlebar),
           [Roact.Event.MouseButton1Down] = function()
             local now = tick()
             if now - self.lastClickTime < 0.5 then

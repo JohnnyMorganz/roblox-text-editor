@@ -59,8 +59,8 @@ function TextEditorComponent:init()
   self.maid = Maid.new()
 
   self.inputRef = Roact.createRef()
-  self.selectionStartPosition, self.updateSelectionStartPosition = Roact.createBinding(-1) -- THIS IS DELAYED
-  self.cursorPosition, self.updateCursorPosition = Roact.createBinding(-1) -- THIS IS DELAYED
+  self.selectionStartPosition, self.updateSelectionStartPosition = Roact.createBinding(-1) -- This is a delayed value as the textbox loses focus before a Button Activated event occurs
+  self.cursorPosition, self.updateCursorPosition = Roact.createBinding(-1) -- Same as above
 end
 
 -- function TextEditorComponent:toggleTagWrapper(tag)
