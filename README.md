@@ -15,10 +15,4 @@ Now you can edit your text quickly and easily, especially helpful with the intro
 Simple! Just [install the plugin](https://www.roblox.com/library/5402211369/Text-Editor), select a TextLabel/TextButton/TextBox, and open up the Text Editor!
 To make editing **even quicker**, you can assign a Studio Shortcut (`FILE > Advanced > Customize Shortcuts` and look for `Text Editor: Toggle Open`) to an easy keybind, so you can quickly open/close the Text Editor when you need it
 
-## TODO: Future Updates
-- Add buttons to change the text alignment within the widget
-- Integrate more text-related properties within the widget (eg. TextStroke, Font) so that it is all in one location
-- Support for Rich Text font and color changing
-- Keybinds for all the toggles (This is currently not possible with Roblox restrictions, as all input is sunk)
-
 Make sure to let me know anything else you would recommend
