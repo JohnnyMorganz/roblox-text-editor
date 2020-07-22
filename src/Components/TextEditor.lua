@@ -59,7 +59,6 @@ function TextEditorComponent:init()
   self.maid = Maid.new()
 
   self.inputRef = Roact.createRef()
-  self.labelText, self.updateLabelText = Roact.createBinding("")
   self.selectionStartPosition, self.updateSelectionStartPosition = Roact.createBinding(-1) -- THIS IS DELAYED
   self.cursorPosition, self.updateCursorPosition = Roact.createBinding(-1) -- THIS IS DELAYED
 end
@@ -108,7 +107,7 @@ end
 -- end
 
 function TextEditorComponent:render()
-  self.updateLabelText(self.props.TextItem.Text)
+  self.props.updateLabelText(self.props.TextItem.Text)
 
   return Roact.createFragment({
     Padding = Roact.createElement("UIPadding", {
@@ -143,7 +142,7 @@ function TextEditorComponent:render()
       BackgroundTransparency = 0,
   
       OnTextChange = function(rbx)
-        self.updateLabelText(rbx.Text)
+        self.props.updateLabelText(rbx.Text)
         
         -- -- Create history waypoints to undo text change
         -- local settingText = rbx.Text
@@ -179,7 +178,7 @@ function TextEditorComponent:render()
   
       OutputLabel = Roact.createElement(ThemedTextLabel, {
         BackgroundTransparency = 1,
-        Text = self.labelText,
+        Text = self.props.labelText,
         RichText = true,
         Width = UDim.new(1, 0),
         

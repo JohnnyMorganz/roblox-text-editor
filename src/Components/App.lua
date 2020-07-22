@@ -13,6 +13,7 @@ local ThemedTextButton = require(script.Parent.TextButton)
 function App:init()
   local studioSettings = settings().Studio
 
+  self.labelText, self.updateLabelText = Roact.createBinding("")
   self.holderSize, self.updateHolderSize = Roact.createBinding(0)
   self:setState({ 
     theme = studioSettings.Theme
@@ -39,6 +40,8 @@ function App:render()
     Children.TextEditor = Roact.createElement(TextEditorComponent, {
       updateHolderSize = self.updateHolderSize,
       pluginActions = self.props.pluginActions,
+      labelText = self.labelText,
+      updateLabelText = self.updateLabelText,
     })
   else
     Children.Label = Roact.createElement(ThemedTextLabel, {

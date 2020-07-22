@@ -10,7 +10,6 @@ Now you can edit your text quickly and easily, especially helpful with the intro
 - Real time output window so you can see how your text will look as you type it
 - Multi-line support for all text fields
 - Toggles for rich text features, allowing you to easily highlight text and apply a rich text property to it (and remove it if already present!). If you toggle when not highlighting anything, it will add new tags at your cursor location, and move your cursor inside of them
-- Explicit save button in case you wish to discard the changes you made
 
 ## Getting Started
 Simple! Just [install the plugin](https://www.roblox.com/library/5402211369/Text-Editor), select a TextLabel/TextButton/TextBox, and open up the Text Editor!
