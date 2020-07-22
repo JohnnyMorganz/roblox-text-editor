@@ -7,12 +7,13 @@ local RoactRodux = require(TextEditor.Packages.RoactRodux)
 local Maid = require(TextEditor.Packages.Maid)
 local Reducer = require(TextEditor.Plugin.Reducer)
 local App = require(TextEditor.Plugin.Components.App)
+local assets = require(TextEditor.Plugin.assets)
 
 local textEditorWidgetInfo = DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 200, 300, 150, 150)
 local toolbar = plugin:CreateToolbar("Text Editor")
-local textEditorButton = toolbar:CreateButton("Open Text Editor", "Open the text editor", "rbxassetid://4459262762")
+local textEditorButton = toolbar:CreateButton("Text Editor", "Open the text editor", assets["logo-studio"])
 local textEditorActions = {
-  toggleOpen = plugin:CreatePluginAction("TextEditorToggleOpen", "Text Editor: Toggle Open", "Toggles the text editor to open/close", "rbxassetid://4459262762", true),
+  toggleOpen = plugin:CreatePluginAction("TextEditorToggleOpen", "Text Editor: Toggle Open", "Toggles the text editor to open/close", assets["logo-studio"], true),
 
   -- Not using PluginActions in this case because
   -- 1) PluginActions aren't fired within a textbox

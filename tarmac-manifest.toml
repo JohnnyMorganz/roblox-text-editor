@@ -1,19 +1,24 @@
-[inputs."assets/bold.png"]
-hash = "18942dc977f8f3d03dca817430cdebe7e208ae262e3410e0bbcc94fb0a58c75d"
-id = 5402145483
+[inputs."assets/logo-studio.png"]
+hash = "9d5cdd51e95b2078756f1b3b3ce92fac4508e8185d5477656c491d09112eecd7"
+id = 5408279289
 packable = false
 
-[inputs."assets/italic.png"]
-hash = "00e7de15619aada1356ea086b625d9e0e79bd983170367aee5b17cbb0621088a"
-id = 5402145537
+[inputs."assets/logo.png"]
+hash = "d21d3ae1b23c9908f7a16f4db7f0c41251b5b8d431cb8da3498a49a075993582"
+id = 5408247454
 packable = false
 
-[inputs."assets/strikethrough.png"]
-hash = "391595127fe7de7f1aae65e3e21d6e57593e532b1bc248d77dbe6bf98a749f69"
-id = 5402145582
+[inputs."assets/paragraph-center.png"]
+hash = "610ac9a38927da923f5cccde4eb178e9fc1b6e4930ff0f13e9d2fd02bdd60f01"
+id = 5408247536
 packable = false
 
-[inputs."assets/underline.png"]
-hash = "31f05f167506107d73b9c77d58218438523e9add9d2fda3ee3f12d31f216d2bf"
-id = 5402145628
+[inputs."assets/paragraph-left.png"]
+hash = "e628a3b6f8bd782c8504d61f42f447e65336bc164f10db1fe1971553daff0031"
+id = 5408187773
+packable = false
+
+[inputs."assets/paragraph-right.png"]
+hash = "370ef79571c3802b5abeba13a4daaeeeb37d55a8ae4cc882ae1845cc0b1586ee"
+id = 5408247637
 packable = false
