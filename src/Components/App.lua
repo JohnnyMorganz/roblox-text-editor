@@ -35,7 +35,7 @@ end
 
 function App:willUpdate(newProps, _newState)
   if newProps.TextItem ~= self.props.TextItem then
-    self.updateLabelText(newProps.TextItem.Text)
+    self.updateLabelText(newProps.TextItem and newProps.TextItem.Text or "")
   end
 end
 
