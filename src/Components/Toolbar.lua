@@ -1,5 +1,7 @@
 local TextEditor = script:FindFirstAncestor("TextEditor")
 local Roact = require(TextEditor.Packages.Roact)
+local RoactRodux = require(TextEditor.Packages.RoactRodux)
+local Llama = require(TextEditor.Packages.Llama)
 
 local Toolbar = Roact.Component:extend("Toolbar")
 local StudioThemeContext = require(script.Parent.StudioThemeContext)
@@ -67,15 +69,52 @@ function Toolbar:render()
           OnClick = self:toggleTagWrapper("s")
         }),
 
-        -- XAlignmentLeft = Roact.createElement(ToolbarButton, {
-        --   type = "ImageButton",
-        --   LayoutOrder = 5,
-        --   Image = assets["paragraph-left"],
-        --   OnClick = self:toggleTagWrapper("s")
-        -- }),
+        XAlignmentLeft = Roact.createElement(ToolbarButton, {
+          type = "ImageButton",
+          LayoutOrder = 5,
+          Image = assets["paragraph-left"],
+          OnClick = function()
+            self.props.setXAlignment(Enum.TextXAlignment.Left)
+          end,
+          IsSelected = self.props.TextXAlignment == Enum.TextXAlignment.Left,
+        }),
+
+        XAlignmentCenter = Roact.createElement(ToolbarButton, {
+          type = "ImageButton",
+          LayoutOrder = 6,
+          Image = assets["paragraph-center"],
+          OnClick = function()
+            self.props.setXAlignment(Enum.TextXAlignment.Center)
+          end,
+          IsSelected = self.props.TextXAlignment == Enum.TextXAlignment.Center,
+        }),
+
+        XAlignmentRight = Roact.createElement(ToolbarButton, {
+          type = "ImageButton",
+          LayoutOrder = 7,
+          Image = assets["paragraph-right"],
+          OnClick = function()
+            self.props.setXAlignment(Enum.TextXAlignment.Right)
+          end,
+          IsSelected = self.props.TextXAlignment == Enum.TextXAlignment.Right,
+        }),
       })
     end
   })
 end
 
-return Toolbar
+return RoactRodux.connect(
+  function(state, props)
+    local newProps = Llama.Dictionary.copy(props)
+    newProps.TextItem = state.TextItem
+    newProps.TextXAlignment = state.TextXAlignment
+    return newProps
+  end,
+  function(dispatch)
+    return {
+      setXAlignment = function(alignment)
+        dispatch({ type = "setXAlignment", alignment = alignment })
+      end,
+    }
+  end
+)(Toolbar)

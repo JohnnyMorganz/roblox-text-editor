@@ -107,8 +107,6 @@ end
 -- end
 
 function TextEditorComponent:render()
-  self.props.updateLabelText(self.props.TextItem.Text)
-
   return Roact.createFragment({
     Padding = Roact.createElement("UIPadding", {
       PaddingLeft = UDim.new(0, 5),
@@ -189,7 +187,7 @@ function TextEditorComponent:render()
         TextStrokeColor3 = self.props.TextItem.TextStrokeColor3,
         TextStrokeTransparency = self.props.TextItem.TextStrokeTransparency,
         TextTransparency = self.props.TextItem.TextTransparency,
-        TextXAlignment = self.props.TextItem.TextXAlignment,
+        TextXAlignment = self.props.TextXAlignment, -- This is specifically managed in the Rodux store
       })
     }),
   })
@@ -200,6 +198,7 @@ return RoactRodux.connect(
     if state.TextItem ~= props.TextItem then
       local newProps = Llama.Dictionary.copy(props)
       newProps.TextItem = state.TextItem
+      newProps.TextXAlignment = state.TextXAlignment
       return newProps
     end
     return props

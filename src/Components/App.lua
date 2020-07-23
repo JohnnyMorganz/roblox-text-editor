@@ -33,6 +33,12 @@ function App:willUnmount()
   self._themeConnection:Disconnect()
 end
 
+function App:willUpdate(newProps, _newState)
+  if newProps.TextItem ~= self.props.TextItem then
+    self.updateLabelText(newProps.TextItem.Text)
+  end
+end
+
 function App:render()
   local Children = {}
 
@@ -92,6 +98,7 @@ function App:render()
               ShowPressed = true,
               OnClicked = function()
                 self.props.TextItem.Text = self.labelText:getValue()
+                self.props.TextItem.TextXAlignment = self.props.TextXAlignment
                 ChangeHistoryService:SetWaypoint("Updated text")
               end,
             }),
@@ -104,11 +111,9 @@ end
 
 return RoactRodux.connect(
   function(state, props)
-    if state.TextItem ~= props.TextItem then
-      local newProps = Llama.Dictionary.copy(props)
-      newProps.TextItem = state.TextItem
-      return newProps
-    end
-    return props
+    local newProps = Llama.Dictionary.copy(props)
+    newProps.TextItem = state.TextItem
+    newProps.TextXAlignment = state.TextXAlignment
+    return newProps
   end
 )(App)

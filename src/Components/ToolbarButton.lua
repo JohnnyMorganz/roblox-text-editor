@@ -9,7 +9,7 @@ local function ToolbarButton(props)
       local elementProps = {
         LayoutOrder = props.LayoutOrder,
         Size = UDim2.fromScale(1, 1),
-        BackgroundColor3 = theme:GetColor("RibbonButton"),
+        BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.RibbonButton, props.IsSelected and Enum.StudioStyleGuideModifier.Selected or Enum.StudioStyleGuideModifier.Default),
         BorderSizePixel = 0,
 
         [Roact.Event.Activated] = props.OnClick,
@@ -17,10 +17,10 @@ local function ToolbarButton(props)
 
       if props.type == "ImageButton" then
         elementProps.Image = props.Image
-        elementProps.ImageColor3 = theme:GetColor("TitlebarText")
+        elementProps.ImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.TitlebarText)
       else
         elementProps.Text = props.Text
-        elementProps.TextColor3 = theme:GetColor("TitlebarText")
+        elementProps.TextColor3 = theme:GetColor(Enum.StudioStyleGuideColor.TitlebarText)
         elementProps.RichText = true
       end
 
