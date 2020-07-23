@@ -1,5 +1,4 @@
 local TextEditor = script:FindFirstAncestor("TextEditor")
-local ChangeHistoryService = game:GetService("ChangeHistoryService")
 local Roact = require(TextEditor.Packages.Roact)
 local RoactRodux = require(TextEditor.Packages.RoactRodux)
 local Llama = require(TextEditor.Packages.Llama)
@@ -10,7 +9,6 @@ local Toolbar = require(script.Parent.Toolbar)
 local Section = require(script.Parent.Section)
 local ThemedTextLabel = require(script.Parent.TextLabel)
 local ThemedTextBox = require(script.Parent.TextBox)
-local ThemedTextButton = require(script.Parent.TextButton)
 
 -- local KEYCODES_FOR_TAGS = {
 --   [Enum.KeyCode.B] = "b",
@@ -131,7 +129,7 @@ function TextEditorComponent:render()
     }),
   
     TextBox = Roact.createElement(ThemedTextBox, {
-      ref = self.inputRef,
+      [Roact.Ref] = self.inputRef,
       LayoutOrder = 2,
       Text = self.props.TextItem.Text,
       ClearTextOnFocus = false,

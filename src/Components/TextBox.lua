@@ -46,7 +46,7 @@ local function TextBox(props)
         MultiLine = props.MultiLine,
         RichText = props.RichText or false,
 
-        [Roact.Ref] = props.ref or nil, --autoSize and update or nil,
+        [Roact.Ref] = props[Roact.Ref] or nil, --autoSize and update or nil,
         [Roact.Change.TextBounds] = autoSize and update or nil,
         [Roact.Change.AbsoluteSize] = autoSize and update or nil,
         [Roact.Change.Parent] = autoSize and update or nil,
