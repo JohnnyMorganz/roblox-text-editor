@@ -31,7 +31,10 @@ local function TextLabel(props)
         LayoutOrder = props.LayoutOrder,
         Position = props.Position,
         Size = props.Size or props.TextWrapped and UDim2.new(1, 0, 0, 0) or nil,
+        BackgroundColor3 = props.BackgroundColor3 or theme:GetColor(Enum.StudioStyleGuideColor.MainBackground),
         BackgroundTransparency = props.BackgroundTransparency or 1,
+        BorderSizePixel = props.BorderSizePixel or 1,
+        Visible = props.Visible == nil or true,
 
         Font = props.Font or Enum.Font.SourceSans,
         TextSize = props.TextSize or 20,

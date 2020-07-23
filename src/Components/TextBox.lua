@@ -42,7 +42,7 @@ local function TextBox(props)
         TextWrapped = props.TextWrapped,
         TextXAlignment = props.TextXAlignment or Enum.TextXAlignment.Left,
         TextYAlignment = props.TextYAlignment or Enum.TextYAlignment.Center,
-        ClearTextOnFocus = props.ClearTextOnFocus == nil and true or props.ClearTextOnFocus,
+        ClearTextOnFocus = props.ClearTextOnFocus == nil or props.ClearTextOnFocus,
         MultiLine = props.MultiLine,
         RichText = props.RichText or false,
 

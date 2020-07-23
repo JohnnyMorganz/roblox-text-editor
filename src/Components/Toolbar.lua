@@ -48,24 +48,28 @@ function Toolbar:render()
         BoldButton = Roact.createElement(ToolbarButton, {
           LayoutOrder = 1,
           Text = "<b>B</b>",
+          Tooltip = "<b>Bold</b>\nMake your text bold",
           OnClick = self:toggleTagWrapper("b")
         }),
 
         ItalicButton = Roact.createElement(ToolbarButton, {
           LayoutOrder = 2,
           Text = "<i>I</i>",
+          Tooltip = "<b>Italics</b>\nItalicize your text",
           OnClick = self:toggleTagWrapper("i")
         }),
   
         UnderlineButton = Roact.createElement(ToolbarButton, {
           LayoutOrder = 3,
           Text = "<u>U</u>",
+          Tooltip = "<b>Underline</b>\nUnderline your text",
           OnClick = self:toggleTagWrapper("u")
         }),
   
         StrikethroughButton = Roact.createElement(ToolbarButton, {
           LayoutOrder = 4,
           Text = "<s>S</s>",
+          Tooltip = "<b>Strikethrough</b>\nCross something out",
           OnClick = self:toggleTagWrapper("s")
         }),
 
@@ -73,6 +77,7 @@ function Toolbar:render()
           type = "ImageButton",
           LayoutOrder = 5,
           Image = assets["paragraph-left"],
+          Tooltip = "<b>Align Left</b>\nAlign your content with the left margin",
           OnClick = function()
             self.props.setXAlignment(Enum.TextXAlignment.Left)
           end,
@@ -83,6 +88,7 @@ function Toolbar:render()
           type = "ImageButton",
           LayoutOrder = 6,
           Image = assets["paragraph-center"],
+          Tooltip = "<b>Align Center</b>\nCenter your content",
           OnClick = function()
             self.props.setXAlignment(Enum.TextXAlignment.Center)
           end,
@@ -93,6 +99,7 @@ function Toolbar:render()
           type = "ImageButton",
           LayoutOrder = 7,
           Image = assets["paragraph-right"],
+          Tooltip = "<b>Align Right</b>\nAlign your content with the right margin",
           OnClick = function()
             self.props.setXAlignment(Enum.TextXAlignment.Right)
           end,
