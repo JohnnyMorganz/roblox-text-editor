@@ -72,6 +72,7 @@ local function onButtonClick()
 end
 
 textEditorWidget:BindToClose(function()
+  textEditorWidget.Enabled = false
   textEditorButton:SetActive(false)
 end)
 
