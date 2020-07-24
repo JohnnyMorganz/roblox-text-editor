@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Added TextWrapped to the "Select a TextLabel..." message
 
+### Changed
+- Cleanup internal code
+
 ## [1.1.1] - 2020-07-24
 ### Fixed
 - Fixed widget not closing when pressing the "X" button

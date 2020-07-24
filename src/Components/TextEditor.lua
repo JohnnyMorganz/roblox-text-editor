@@ -137,7 +137,7 @@ function TextEditorComponent:render()
       Size = UDim2.new(1, 0, 0.5, 0),
       BackgroundTransparency = 0,
   
-      OnTextChange = function(rbx)
+      [Roact.Change.Text] = function(rbx)
         self.props.updateLabelText(rbx.Text)
         
         -- -- Create history waypoints to undo text change
@@ -150,13 +150,13 @@ function TextEditorComponent:render()
         -- end)
       end,
   
-      OnSelectionStartChange = function(rbx)
+      [Roact.Change.SelectionStart] = function(rbx)
         delay(0.3, function()
           self.updateSelectionStartPosition(rbx.SelectionStart)
         end)
       end,
   
-      OnCursorPositionChange = function(rbx)
+      [Roact.Change.CursorPosition] = function(rbx)
         delay(0.3, function()
           self.updateCursorPosition(rbx.CursorPosition)
         end)
