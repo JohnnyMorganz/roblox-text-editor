@@ -53,7 +53,9 @@ function App:render()
     Children.Label = Roact.createElement(ThemedTextLabel, {
       Text = "Select a TextLabel, TextButton or TextBox to edit",
       AnchorPoint = Vector2.new(0.5, 0.5),
-      Position = UDim2.fromScale(0.5, 0.5)
+      Position = UDim2.fromScale(0.5, 0.5),
+      TextWrapped = true,
+      TextXAlignment = Enum.TextXAlignment.Center,
     })
   end
 
