@@ -1,6 +1,8 @@
 # Roblox Text Editor
 A plugin for editing Text fields for TextLabels/Buttons/Boxes in Roblox Studio
 
+For more information, please check out [this Devforum Post](https://devforum.roblox.com/t/text-editor-make-editing-text-fields-much-easier/684771?u=johnnymorganz)
+
 Are you making some UI involving Text? You must've felt constricted to that tiny little input field in the properties field, making it really hard to work and check what you're typing.
 
 To solve this, check out the Text Editor plugin!
