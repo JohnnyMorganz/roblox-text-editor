@@ -1,7 +1,9 @@
 local TextEditor = script:FindFirstAncestor("TextEditor")
+local ChangeHistoryService = game:GetService("ChangeHistoryService")
 local Roact = require(TextEditor.Packages.Roact)
 local RoactRodux = require(TextEditor.Packages.RoactRodux)
 local Llama = require(TextEditor.Packages.Llama)
+local Utilities = require(TextEditor.Plugin.Utilities)
 
 local Toolbar = Roact.Component:extend("Toolbar")
 local StudioThemeContext = require(script.Parent.StudioThemeContext)
@@ -13,7 +15,7 @@ function Toolbar:toggleTagWrapper(tag)
     local textBox = self.props.inputRef:getValue()
     local cursorPosition, selectionStart = self.props.cursorPosition:getValue(), self.props.selectionStartPosition:getValue()
     if cursorPosition ~= -1 and selectionStart ~= -1 then
-      local text, startPosition, endPosition = self.props.addTagsAroundSelection(textBox, cursorPosition, selectionStart, tag)
+      local text, startPosition, endPosition = Utilities.addTagsAroundSelection(textBox, cursorPosition, selectionStart, tag)
       textBox.Text = text
       textBox:CaptureFocus()
       textBox.SelectionStart = startPosition
@@ -28,6 +30,14 @@ function Toolbar:toggleTagWrapper(tag)
       textBox:CaptureFocus()
       textBox.CursorPosition = newCursorPosition 
     end
+  end
+end
+
+function Toolbar:didUpdate(prevProps, _prevState)
+  if self.props.TextXAlignment ~= prevProps.TextXAlignment then
+    -- Update the TextItem TextXAlignment when a button is pressed
+    self.props.TextItem.TextXAlignment = self.props.TextXAlignment
+    ChangeHistoryService:SetWaypoint("Change TextXAlignment")
   end
 end
 

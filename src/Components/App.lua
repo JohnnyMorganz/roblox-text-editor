@@ -1,5 +1,4 @@
 local TextEditor = script:FindFirstAncestor("TextEditor")
-local ChangeHistoryService = game:GetService("ChangeHistoryService")
 local Roact = require(TextEditor.Packages.Roact)
 local RoactRodux = require(TextEditor.Packages.RoactRodux)
 local Llama = require(TextEditor.Packages.Llama)
@@ -8,7 +7,6 @@ local App = Roact.Component:extend("App")
 local StudioThemeContext = require(script.Parent.StudioThemeContext)
 local TextEditorComponent = require(script.Parent.TextEditor)
 local ThemedTextLabel = require(script.Parent.TextLabel)
-local ThemedTextButton = require(script.Parent.TextButton)
 
 function App:init()
   local studioSettings = settings().Studio
@@ -72,39 +70,18 @@ function App:render()
           Holder = Roact.createElement("ScrollingFrame", {
             LayoutOrder = 1,
             BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground, Enum.StudioStyleGuideModifier.Default),
-            Size = self.props.TextItem and UDim2.new(1, 0, 1, -35) or UDim2.fromScale(1, 1),
+            BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
+            Size = UDim2.fromScale(1, 1), -- self.props.TextItem and UDim2.new(1, 0, 1, -35) or UDim2.fromScale(1, 1),
             CanvasSize = self.holderSize:map(function(value)
               return UDim2.fromOffset(0, value)
             end),
+            ScrollBarThickness = 8,
+            TopImage = "rbxasset://textures/StudioToolbox/ScrollBarTop.png",
+            MidImage = "rbxasset://textures/StudioToolbox/ScrollBarMiddle.png",
+            BottomImage = "rbxasset://textures/StudioToolbox/ScrollBarBottom.png",
+            -- ScrollBarImageColor3 = theme:GetColor(Enum.StudioStyleGuideColor.ScrollBar), TODO: this colour is really bad...
+            VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar,
           }, Children),
-
-          SaveButtonHolder = Roact.createElement("Frame", {
-            LayoutOrder = 2,
-            Size = UDim2.new(1, 0, 0, 35),
-            BackgroundColor3 = theme:GetColor(Enum.StudioStyleGuideColor.MainBackground, Enum.StudioStyleGuideModifier.Default),
-            BorderColor3 = theme:GetColor(Enum.StudioStyleGuideColor.Border),
-            Visible = self.props.TextItem
-          }, {
-            Padding = Roact.createElement("UIPadding", {
-              PaddingTop = UDim.new(0, 5),
-              PaddingBottom = UDim.new(0, 5),
-              PaddingLeft = UDim.new(0, 5),
-              PaddingRight = UDim.new(0, 5),
-            }),
-
-            SaveButton = Roact.createElement(ThemedTextButton, {
-              Name = "Apply",
-              Size = UDim2.fromScale(1, 1),
-              AnchorPoint = Vector2.new(0, 1),
-              Enabled = true,
-              ShowPressed = true,
-              OnClicked = function()
-                self.props.TextItem.Text = self.labelText:getValue()
-                self.props.TextItem.TextXAlignment = self.props.TextXAlignment
-                ChangeHistoryService:SetWaypoint("Updated text")
-              end,
-            }),
-          })
         })
       end
     })

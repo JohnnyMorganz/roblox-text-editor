@@ -1,4 +1,5 @@
 local TextEditor = script:FindFirstAncestor("TextEditor")
+local ChangeHistoryService = game:GetService("ChangeHistoryService")
 local Roact = require(TextEditor.Packages.Roact)
 local RoactRodux = require(TextEditor.Packages.RoactRodux)
 local Llama = require(TextEditor.Packages.Llama)
@@ -16,49 +17,53 @@ local ThemedTextBox = require(script.Parent.TextBox)
 --   [Enum.KeyCode.U] = "u",
 -- }
 
-local function stringtrim(str)
-  return string.match(str, '^%s*(.-)%s*$')
-end
-
-local function stringstartswith(str, pattern, plain)
-	local start = 1
-	return string.find(str, pattern, start, plain) == start
-end
-
-local function stringendswith(str, pattern, plain)
-	local start = #str - #pattern + 1
-	return string.find(str, pattern, start, plain) == start
-end
-
-local function addTagsAroundSelection(guiItem, cursorPosition, selectionStart, tag)
-  if cursorPosition == -1 or selectionStart == -1 then return guiItem.Text end
-
-  local startTag, endTag = string.format('<%s>', tag), string.format('</%s>', tag)
-
-  local selectedText = string.sub(guiItem.Text, math.min(cursorPosition, selectionStart), math.max(cursorPosition, selectionStart) - 1)
-  local trimmedSelectedText = stringtrim(selectedText)
-
-  if stringstartswith(trimmedSelectedText, startTag) and stringendswith(trimmedSelectedText, endTag) then
-    selectedText = selectedText:gsub(startTag, ""):gsub(endTag, "")
-  else
-    selectedText = startTag .. selectedText .. endTag
-  end
-
-  local text = string.sub(guiItem.Text, 0, math.min(cursorPosition, selectionStart) - 1)
-  local startPosition = text:len() + 1
-  text ..= selectedText
-  local endPosition = text:len() + 1
-  text ..= string.sub(guiItem.Text, math.max(cursorPosition, selectionStart))
-
-  return text, startPosition, endPosition
-end
-
 function TextEditorComponent:init()
-  self.maid = Maid.new()
+  self.textItemMaid = Maid.new() -- Maid related to the TextItem involved
 
   self.inputRef = Roact.createRef()
   self.selectionStartPosition, self.updateSelectionStartPosition = Roact.createBinding(-1) -- This is a delayed value as the textbox loses focus before a Button Activated event occurs
   self.cursorPosition, self.updateCursorPosition = Roact.createBinding(-1) -- Same as above
+end
+
+function TextEditorComponent:_saveText()
+  local newText = self.props.labelText:getValue()
+
+  if self.props.TextItem.Text ~= newText then
+    self.props.TextItem.Text = newText
+    ChangeHistoryService:SetWaypoint("Updated text")
+  end
+end
+
+function TextEditorComponent:_addTextItemConnections()
+  self.textItemMaid:DoCleaning() -- Clear any old connections
+
+  -- Connect to any property changes of the TextItem, so that the Text Editor is up to date
+  self.textItemMaid:GiveTask(self.props.TextItem:GetPropertyChangedSignal("Text"):Connect(function()
+    local textBox = self.inputRef:getValue()
+    if textBox then
+      textBox.Text = self.props.TextItem.Text
+    end
+  end))
+
+  self.textItemMaid:GiveTask(self.props.TextItem:GetPropertyChangedSignal("TextXAlignment"):Connect(function()
+    if self.props.TextXAlignment ~= self.props.TextItem.TextXAlignment then
+      self.props.setXAlignment(self.props.TextItem.TextXAlignment)
+  end
+  end))
+end
+
+function TextEditorComponent:didMount()
+  self:_addTextItemConnections()
+end
+
+function TextEditorComponent:didUpdate(prevProps, _prevState)
+  if prevProps.TextItem ~= self.props.TextItem then
+    self:_addTextItemConnections()
+end
+end
+
+function TextEditorComponent:willUnmount()
+  self.textItemMaid:DoCleaning()
 end
 
 -- function TextEditorComponent:toggleTagWrapper(tag)
@@ -100,10 +105,6 @@ end
 --   self.maid:GiveTask(self.props.pluginActions.toggleStrikethrough.Triggered:Connect(self:toggleTagWrapper("s")))
 -- end
 
--- function TextEditorComponent:willUnmount()
---   self.maid:DoCleaning()
--- end
-
 function TextEditorComponent:render()
   return Roact.createFragment({
     Padding = Roact.createElement("UIPadding", {
@@ -125,7 +126,6 @@ function TextEditorComponent:render()
       inputRef = self.inputRef,
       cursorPosition = self.cursorPosition,
       selectionStartPosition = self.selectionStartPosition,
-      addTagsAroundSelection = addTagsAroundSelection,
     }),
   
     TextBox = Roact.createElement(ThemedTextBox, {
@@ -139,27 +139,24 @@ function TextEditorComponent:render()
   
       [Roact.Change.Text] = function(rbx)
         self.props.updateLabelText(rbx.Text)
-        
-        -- -- Create history waypoints to undo text change
-        -- local settingText = rbx.Text
-        -- local focusedTextItem = self.props.TextItem
-        -- delay(1, function()
-        --   if focusedTextItem == self.props.TextItem and settingText == rbx.Text then
-        --     ChangeHistoryService:SetWaypoint("Typed Text")
-        --   end
-        -- end)
       end,
   
       [Roact.Change.SelectionStart] = function(rbx)
-        delay(0.3, function()
+        coroutine.wrap(function()
+          wait(0.3)
           self.updateSelectionStartPosition(rbx.SelectionStart)
-        end)
+        end)()
       end,
   
       [Roact.Change.CursorPosition] = function(rbx)
-        delay(0.3, function()
+        coroutine.wrap(function()
+          wait(0.3)
           self.updateCursorPosition(rbx.CursorPosition)
-        end)
+        end)()
+      end,
+
+      [Roact.Event.FocusLost] = function()
+        self:_saveText()
       end,
     }, {
       SizeConstraint = Roact.createElement("UISizeConstraint", {
@@ -204,5 +201,12 @@ return RoactRodux.connect(
       return newProps
     end
     return props
+  end,
+  function(dispatch)
+    return {
+      setXAlignment = function(alignment)
+        dispatch({ type = "setXAlignment", alignment = alignment })
+      end,
+    }
   end
 )(TextEditorComponent)
