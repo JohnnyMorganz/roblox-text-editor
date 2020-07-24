@@ -91,7 +91,7 @@ function App:render()
             }),
 
             SaveButton = Roact.createElement(ThemedTextButton, {
-              Name = "Save",
+              Name = "Apply",
               Size = UDim2.fromScale(1, 1),
               AnchorPoint = Vector2.new(0, 1),
               Enabled = true,
