@@ -24,21 +24,27 @@ TextLabel.defaultProps = {
   themeModifier = Enum.StudioStyleGuideModifier.Default,
 }
 
-function TextLabel:render()
+function TextLabel:init()
   local size = self.props.Size
   if not size then
-    -- TODO: If TextWrapped, use AbsoluteSize.X and use Vector2.new(AbsoluteSize.X - 2, math.huge) [AbsoluteSize needs to be updated first]
-    local TextBounds = TextService:GetTextSize(self.props.Text, self.props.TextSize, self.props.Font, Vector2.new(math.huge, math.huge))
-    size = UDim2.new(self.props.Width or UDim.new(0, TextBounds.X), UDim.new(0, TextBounds.Y))
+    if self.props.TextWrapped then
+      size = UDim2.fromScale(1, 0)
+    else
+      local TextBounds = TextService:GetTextSize(typeof(self.props.Text) == "string" and self.props.Text or self.props.Text:getValue(), self.props.TextSize, self.props.Font, Vector2.new(math.huge, math.huge))
+      size = UDim2.new(self.props.Width or UDim.new(0, TextBounds.X), UDim.new(0, TextBounds.Y))
+    end
   end
+  self.size, self.updateSize = Roact.createBinding(size)
+end
 
+function TextLabel:render()
   return Roact.createElement(StudioThemeContext.Consumer, {
     render = function(theme)
       return Roact.createElement("TextLabel", {
         AnchorPoint = self.props.AnchorPoint,
         LayoutOrder = self.props.LayoutOrder,
         Position = self.props.Position,
-        Size = size,
+        Size = self.size,
         BackgroundColor3 = self.props.BackgroundColor3 or theme:GetColor(self.props.backgroundThemeType, self.props.themeModifier),
         BackgroundTransparency = self.props.BackgroundTransparency,
         BorderSizePixel = self.props.BorderSizePixel,
@@ -53,7 +59,14 @@ function TextLabel:render()
         TextYAlignment = self.props.TextYAlignment,
         RichText = self.props.RichText,
 
-        [Roact.Change.Text] = self.props[Roact.Change.Text],
+        [Roact.Change.Text] = function(rbx, ...)
+          local MaxWidth = self.props.TextWrapped and rbx.AbsoluteSize.X - 2 or math.huge
+          local TextBounds = TextService:GetTextSize(rbx.Text, self.props.TextSize, self.props.Font, Vector2.new(MaxWidth, math.huge))
+          self.updateSize(UDim2.new(self.props.TextWrapped and UDim.new(1, 0) or self.props.Width or UDim.new(0, TextBounds.X), UDim.new(0, TextBounds.Y)))
+          if self.props[Roact.Change.Text] then
+            self.props[Roact.Change.Text](rbx, ...)
+          end
+        end,
       })
     end
   })
