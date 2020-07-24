@@ -134,7 +134,7 @@ function TextEditorComponent:render()
       Text = self.props.TextItem.Text,
       ClearTextOnFocus = false,
       MultiLine = true,
-      Size = UDim2.new(1, 0, 0.5, 0),
+      Width = UDim.new(1, 0),
       BackgroundTransparency = 0,
   
       [Roact.Change.Text] = function(rbx)
@@ -161,6 +161,10 @@ function TextEditorComponent:render()
           self.updateCursorPosition(rbx.CursorPosition)
         end)
       end,
+    }, {
+      SizeConstraint = Roact.createElement("UISizeConstraint", {
+        MinSize = Vector2.new(0, 100),
+      }),
     }),
   
     Output = Roact.createElement(Section, {
