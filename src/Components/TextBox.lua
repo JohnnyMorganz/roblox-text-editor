@@ -8,6 +8,7 @@ local TextBox = Roact.Component:extend("TextBox")
 
 TextBox.defaultProps = {
   BackgroundTransparency = 1,
+  ClipsDescendants = false,
 
   Font = Enum.Font.SourceSans,
   TextSize = 20,
@@ -54,6 +55,7 @@ function TextBox:render()
         BackgroundTransparency = self.props.BackgroundTransparency,
         BackgroundColor3 = theme:GetColor(self.props.themeType, self.props.themeModifier),
         BorderColor3 = theme:GetColor(self.props.borderThemeType, self.props.themeModifier),
+        ClipsDescendants = self.props.ClipsDescendants,
 
         Font = self.props.Font,
         TextSize = self.props.TextSize,
@@ -80,6 +82,7 @@ function TextBox:render()
         end,
         [Roact.Change.SelectionStart] = self.props[Roact.Change.SelectionStart],
         [Roact.Change.CursorPosition] = self.props[Roact.Change.CursorPosition],
+        [Roact.Event.Focused] = self.props[Roact.Event.Focused],
         [Roact.Event.FocusLost] = self.props[Roact.Event.FocusLost],
       }, self.props[Roact.Children])
     end

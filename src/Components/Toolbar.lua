@@ -8,7 +8,24 @@ local Utilities = require(TextEditor.Plugin.Utilities)
 local Toolbar = Roact.Component:extend("Toolbar")
 local StudioThemeContext = require(script.Parent.StudioThemeContext)
 local ToolbarButton = require(script.Parent.ToolbarButton)
+local ThemedTextBox = require(script.Parent.TextBox)
+local TypeDropdown = require(script.Parent.TypeDropdown)
 local assets = require(TextEditor.Plugin.assets)
+
+local FONT_NAMES = {}
+do
+  for _, font in pairs(Enum.Font:GetEnumItems()) do
+    table.insert(FONT_NAMES, font.Name)
+  end
+end
+
+local function ToolbarSpacer(props)
+  return Roact.createElement("Frame", {
+    LayoutOrder = props.LayoutOrder,
+    BackgroundTransparency = 1,
+    Size = UDim2.new(0, props.Width or 3, 1, 0),
+  })
+end
 
 function Toolbar:toggleTagWrapper(tag)
   return function()
@@ -39,6 +56,16 @@ function Toolbar:didUpdate(prevProps, _prevState)
     self.props.TextItem.TextXAlignment = self.props.TextXAlignment
     ChangeHistoryService:SetWaypoint("Change TextXAlignment")
   end
+
+  if self.props.Font ~= prevProps.Font then
+    self.props.TextItem.Font = self.props.Font
+    ChangeHistoryService:SetWaypoint("Change Font")
+  end
+
+  if self.props.TextSize ~= prevProps.TextSize then
+    self.props.TextItem.TextSize = self.props.TextSize
+    ChangeHistoryService:SetWaypoint("Change TextSize")
+  end
 end
 
 function Toolbar:render()
@@ -54,30 +81,66 @@ function Toolbar:render()
           SortOrder = Enum.SortOrder.LayoutOrder,
           FillDirection = Enum.FillDirection.Horizontal,
         }),
-  
-        BoldButton = Roact.createElement(ToolbarButton, {
+        
+        Font = Roact.createElement(TypeDropdown, {
           LayoutOrder = 1,
+          Size = UDim2.new(0, 0, 0, 20),
+          currentOption = self.props.Font.Name,
+          options = FONT_NAMES,
+          OnOptionSelect = function(option)
+            self.props.setFont(Enum.Font[option])
+          end,
+        }),
+
+        Spacer1 = Roact.createElement(ToolbarSpacer, {
+          LayoutOrder = 2,
+        }),
+
+        TextSize = Roact.createElement(ThemedTextBox, {
+          LayoutOrder = 3,
+          BackgroundTransparency = 0,
+          TextSize = 14,
+          Size = UDim2.new(0, 22, 1, 0),
+          Text = self.props.TextSize,
+          TextXAlignment = Enum.TextXAlignment.Center,
+          ClipsDescendants = true,
+          [Roact.Event.FocusLost] = function(rbx)
+            local newTextSize = tonumber(rbx.Text)
+            if newTextSize and newTextSize > 0 and newTextSize <= 100 then
+              self.props.setTextSize(newTextSize)
+            else
+              rbx.Text = self.props.TextSize
+            end
+          end,
+        }),
+
+        Spacer2 = Roact.createElement(ToolbarSpacer, {
+          LayoutOrder = 4,
+        }),
+
+        BoldButton = Roact.createElement(ToolbarButton, {
+          LayoutOrder = 5,
           Text = "<b>B</b>",
           Tooltip = "<b>Bold</b>\nMake your text bold",
           OnClick = self:toggleTagWrapper("b")
         }),
 
         ItalicButton = Roact.createElement(ToolbarButton, {
-          LayoutOrder = 2,
+          LayoutOrder = 6,
           Text = "<i>I</i>",
           Tooltip = "<b>Italics</b>\nItalicize your text",
           OnClick = self:toggleTagWrapper("i")
         }),
   
         UnderlineButton = Roact.createElement(ToolbarButton, {
-          LayoutOrder = 3,
+          LayoutOrder = 7,
           Text = "<u>U</u>",
           Tooltip = "<b>Underline</b>\nUnderline your text",
           OnClick = self:toggleTagWrapper("u")
         }),
   
         StrikethroughButton = Roact.createElement(ToolbarButton, {
-          LayoutOrder = 4,
+          LayoutOrder = 8,
           Text = "<s>S</s>",
           Tooltip = "<b>Strikethrough</b>\nCross something out",
           OnClick = self:toggleTagWrapper("s")
@@ -85,7 +148,7 @@ function Toolbar:render()
 
         XAlignmentLeft = Roact.createElement(ToolbarButton, {
           type = "ImageButton",
-          LayoutOrder = 5,
+          LayoutOrder = 9,
           Image = assets["paragraph-left"],
           Tooltip = "<b>Align Left</b>\nAlign your content with the left margin",
           OnClick = function()
@@ -96,7 +159,7 @@ function Toolbar:render()
 
         XAlignmentCenter = Roact.createElement(ToolbarButton, {
           type = "ImageButton",
-          LayoutOrder = 6,
+          LayoutOrder = 10,
           Image = assets["paragraph-center"],
           Tooltip = "<b>Align Center</b>\nCenter your content",
           OnClick = function()
@@ -107,7 +170,7 @@ function Toolbar:render()
 
         XAlignmentRight = Roact.createElement(ToolbarButton, {
           type = "ImageButton",
-          LayoutOrder = 7,
+          LayoutOrder = 11,
           Image = assets["paragraph-right"],
           Tooltip = "<b>Align Right</b>\nAlign your content with the right margin",
           OnClick = function()
@@ -125,12 +188,20 @@ return RoactRodux.connect(
     local newProps = Llama.Dictionary.copy(props)
     newProps.TextItem = state.TextItem
     newProps.TextXAlignment = state.TextXAlignment
+    newProps.Font = state.Font
+    newProps.TextSize = state.TextSize
     return newProps
   end,
   function(dispatch)
     return {
       setXAlignment = function(alignment)
         dispatch({ type = "setXAlignment", alignment = alignment })
+      end,
+      setFont = function(font)
+        dispatch({ type = "setFont", font = font })
+      end,
+      setTextSize = function(textSize)
+        dispatch({ type = "setTextSize", textSize = textSize })
       end,
     }
   end

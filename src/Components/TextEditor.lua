@@ -48,7 +48,19 @@ function TextEditorComponent:_addTextItemConnections()
   self.textItemMaid:GiveTask(self.props.TextItem:GetPropertyChangedSignal("TextXAlignment"):Connect(function()
     if self.props.TextXAlignment ~= self.props.TextItem.TextXAlignment then
       self.props.setXAlignment(self.props.TextItem.TextXAlignment)
-  end
+    end
+  end))
+
+  self.textItemMaid:GiveTask(self.props.TextItem:GetPropertyChangedSignal("Font"):Connect(function()
+    if self.props.Font ~= self.props.TextItem.Font then
+      self.props.setFont(self.props.TextItem.Font)
+    end
+  end))
+
+  self.textItemMaid:GiveTask(self.props.TextItem:GetPropertyChangedSignal("TextSize"):Connect(function()
+    if self.props.TextSize ~= self.props.TextItem.TextSize then
+      self.props.setTextSize(self.props.TextItem.TextSize)
+    end
   end))
 end
 
@@ -59,32 +71,12 @@ end
 function TextEditorComponent:didUpdate(prevProps, _prevState)
   if prevProps.TextItem ~= self.props.TextItem then
     self:_addTextItemConnections()
-end
+  end
 end
 
 function TextEditorComponent:willUnmount()
   self.textItemMaid:DoCleaning()
 end
-
--- function TextEditorComponent:toggleTagWrapper(tag)
---   return function()
---     local textBox = self.inputRef:getValue()
---     local cursorPosition, selectionStart = self.cursorPosition:getValue(), self.selectionStartPosition:getValue()
---     if cursorPosition ~= -1 and selectionStart ~= -1 then
---       textBox.Text = addTagsAroundSelection(textBox, cursorPosition, selectionStart, tag)
---       textBox:CaptureFocus()
---     else
---       -- Add tags at cursor position and then set the cursor in between them
---       local startText, endText = textBox.Text:sub(0, cursorPosition - 1), textBox.Text:sub(cursorPosition)
---       startText ..= "<" .. tag .. ">"
---       local newCursorPosition = startText:len() + 1
---       startText ..= "</" .. tag .. ">"
---       textBox.Text = startText .. endText
---       textBox:CaptureFocus()
---       textBox.CursorPosition = newCursorPosition 
---     end
---   end
--- end
 
 -- function TextEditorComponent:didMount()
 --   local overlay = self.props.overlayRef:getValue()
@@ -180,9 +172,9 @@ function TextEditorComponent:render()
         Width = UDim.new(1, 0),
         
         -- Copy the label text
-        Font = self.props.TextItem.Font,
+        Font = self.props.Font, -- This is specifically managed in the Rodux store
         TextColor3 = self.props.TextItem.TextColor3,
-        TextSize = self.props.TextItem.TextSize,
+        TextSize = self.props.TextSize, -- This is specifically managed in the Rodux store
         TextStrokeColor3 = self.props.TextItem.TextStrokeColor3,
         TextStrokeTransparency = self.props.TextItem.TextStrokeTransparency,
         TextTransparency = self.props.TextItem.TextTransparency,
@@ -198,6 +190,8 @@ return RoactRodux.connect(
       local newProps = Llama.Dictionary.copy(props)
       newProps.TextItem = state.TextItem
       newProps.TextXAlignment = state.TextXAlignment
+      newProps.Font = state.Font
+      newProps.TextSize = state.TextSize
       return newProps
     end
     return props
@@ -206,6 +200,12 @@ return RoactRodux.connect(
     return {
       setXAlignment = function(alignment)
         dispatch({ type = "setXAlignment", alignment = alignment })
+      end,
+      setFont = function(font)
+        dispatch({ type = "setFont", font = font })
+      end,
+      setTextSize = function(textSize)
+        dispatch({ type = "setTextSize", textSize = textSize })
       end,
     }
   end

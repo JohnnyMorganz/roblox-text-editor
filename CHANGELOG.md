@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The input TextBox now scales vertically as more text is added
 - Added listening to relevant TextItem properties for changes incase they are not changed through the Text Editor
 - Added better ChangeHistoryService support for text (and other Text related properties currently handled by the Editor) changes
+- Added ability to change Font and TextSize
 
 ### Fixed
 - Added TextWrapped to the "Select a TextLabel..." message
